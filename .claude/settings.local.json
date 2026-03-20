@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv \"../_temp_assets/coach.png\" \"c:\\\\Users\\\\axu01\\\\Works\\\\gc-tech-intro-site\\\\public\\\\coach.png\")",
+      "Bash(rmdir \"../_temp_assets\")"
+    ]
+  }
+}

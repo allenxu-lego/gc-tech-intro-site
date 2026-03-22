@@ -4,15 +4,23 @@
 
 The Dify Execution Steps Layer is an interactive SVG overlay component that displays AI workflow deployment steps above the `e-aliyun-jenkins-dify` edge in the flowchart. It features auto-scrolling items with fade animations, a spinning gear icon, click-to-pause functionality, and an ice-blue color theme. Triggered by clicking the `jenkins-for-dify` action node.
 
+Additionally, the StepDescription component has been enhanced with:
+- Complete descriptions for all 11 workflow steps
+- InfoPopup component for inline detailed information
+- Clickable icon on default state to trigger workflow start
+- Production node completion handling
+
 ## Steering Document Alignment
 
 ### Technical Standards (tech.md)
+
 - Uses React functional components with hooks for state management
 - Follows existing TypeScript patterns with strict typing
 - Uses Tailwind CSS for styling (via CSS classes defined in globals.css)
 - Implements CSS animations following the existing flowchart animation patterns
 
 ### Project Structure (structure.md)
+
 - Component files placed in `src/components/flowchart/`
 - Data definitions added to `flowchartData.ts`
 - Animation constants reuse existing values from `FlowchartContext.tsx`
@@ -20,16 +28,18 @@ The Dify Execution Steps Layer is an interactive SVG overlay component that disp
 ## Code Reuse Analysis
 
 ### Existing Components to Leverage
+
 - **ExecutionStepsLayer.tsx**: Reuse as template for the new `DifyExecStepsLayer.tsx` component with adapted positioning and data
 - **FlowchartContext.tsx**: Add new state fields for Dify layer visibility and pause control following the same pattern as `execStepsVisible`
 - **globals.css**: Reuse existing animation keyframes (`exec-steps-fade-in`, `exec-steps-item-fade-in`)
 - **FlowchartNode.tsx**: Reference for accessibility patterns (`role`, `aria-label`, `tabIndex`)
 
 ### Integration Points
+
 - **Flowchart.tsx**: Add the new `DifyExecStepsLayer` component to the SVG, conditionally rendered based on state
-- **FlowchartContext.tsx**: Add `difyExecStepsVisible`, `difyExecStepsCurrentIndex`, `setDifyExecStepsVisible`, `setDifyExecStepsCurrentIndex`, `resetDifyExecStepsAnimation`
+- **FlowchartContext.tsx**: Add `difyExecStepsVisible`, `difyExecStepsCurrentIndex`, `setDifyExecStepsVisible`, `setDifyExecStepsCurrentIndex`, `resetDifyExecStepsAnimation`, `addToCompletedNodes`
 - **flowchartData.ts**: Add `DIFY_EXECUTION_STEPS` data structure
-- **index.ts**: Export `DifyExecStepsLayer` component
+- **StepDescription.tsx**: Add `InfoPopup` component, complete step descriptions, `onStartWorkflow` callback
 
 ## Architecture
 
@@ -48,20 +58,33 @@ graph TD
     J --> C
     C -.->|onClick| K[handleLayerClick]
     K --> L[Toggle Pause/Resume]
+    B --> M[StepDescription]
+    M --> N[InfoPopup]
+    M --> O[Default Play Icon - Clickable]
+    O -.->|onClick| P[Start Workflow]
 ```
 
 ### SVG Hierarchy Position
+
 The `DifyExecStepsLayer` should be rendered after the edges but before the nodes in the SVG, so it appears behind nodes but above edges (same as existing `ExecutionStepsLayer`).
 
 ## Components and Interfaces
 
 ### DifyExecStepsLayer Component
+
 - **Purpose:** Container component that renders the Dify deployment steps overlay with auto-scroll functionality, pause control, and spinning gear
 - **File:** `src/components/flowchart/DifyExecStepsLayer.tsx`
 - **Dependencies:** `useFlowchart()` hook, CSS animations from globals.css, `Settings` icon from Lucide
 - **Reuses:** Animation timing constants from FlowchartContext.tsx, accessibility patterns from FlowchartNode.tsx
 
+### InfoPopup Component
+
+- **Purpose:** Inline popup component for displaying additional information when an info icon is clicked
+- **File:** `src/components/flowchart/StepDescription.tsx` (inline)
+- **Dependencies:** `useState` hook, `AnimatePresence` from framer-motion, `Info` and `X` icons from Lucide
+
 ### Internal State (in FlowchartContext)
+
 ```typescript
 // Add to FlowchartContextValue
 difyExecStepsVisible: boolean;
@@ -69,16 +92,28 @@ difyExecStepsCurrentIndex: number;
 setDifyExecStepsVisible: (visible: boolean) => void;
 setDifyExecStepsCurrentIndex: (index: number) => void;
 resetDifyExecStepsAnimation: () => void;
+addToCompletedNodes: (nodeId: string) => void;
 ```
 
 ### Local State (in DifyExecStepsLayer)
+
 ```typescript
 const [isPaused, setIsPaused] = useState(false);
+```
+
+### StepDescription Props
+
+```typescript
+interface StepDescriptionProps {
+  activeNode: NodeId | null;
+  onStartWorkflow?: () => void;  // Callback to start workflow from default state
+}
 ```
 
 ## Data Models
 
 ### DifyExecutionStepItem
+
 ```typescript
 interface DifyExecutionStepItem {
   id: string;
@@ -88,16 +123,28 @@ interface DifyExecutionStepItem {
 
 // Defined in flowchartData.ts
 const DIFY_EXECUTION_STEPS: DifyExecutionStepItem[] = [
-  { id: 'pull-dsl', label: 'Pull DSL', icon: Download },           // Download for pulling
-  { id: 'login-dify', label: 'Login Dify', icon: LogIn },          // LogIn for authentication
-  { id: 'deploy-workflow', label: 'Deploy', icon: Rocket }, // Rocket for deployment
-  { id: 'verify', label: 'Verify', icon: CheckCircle },            // CheckCircle for verification
+  { id: 'pull-dsl', label: 'Pull DSL', icon: Download },
+  { id: 'login-dify', label: 'Login Dify', icon: LogIn },
+  { id: 'deploy-workflow', label: 'Deploy', icon: Rocket },
+  { id: 'verify', label: 'Verify', icon: CheckCircle },
 ];
+```
+
+### StepInfo (for StepDescription)
+
+```typescript
+interface StepInfo {
+  title: string;
+  description: string | React.ReactNode;  // Can contain JSX with inline icons
+  icon: React.ComponentType<{ size?: number; style?: React.CSSProperties; strokeWidth?: number }>;
+  accent: string;
+}
 ```
 
 ## Positioning
 
 The layer will be positioned above the `e-aliyun-jenkins-dify` edge:
+
 - **Edge from:** `jenkins-for-dify` at position `{ x: 550, y: 320 }`
 - **Edge to:** `dify` at position `{ x: 300, y: 320 }`
 - **Layer position:** Midpoint of the horizontal edge, offset upward
@@ -119,6 +166,7 @@ const position = {
 ## Visual Styling
 
 ### Layer Container (Ice-Blue Theme - Same as Existing)
+
 - **Size:** 100px width × 48px height
 - **Background:** Light ice-blue (`#f0f9ff`)
 - **Border:** 1.5px solid sky-400 (`#38bdf8`)
@@ -126,6 +174,7 @@ const position = {
 - **Shadow:** `drop-shadow(0 1px 3px rgba(56, 189, 248, 0.2))`
 
 ### Spinning Gear Icon
+
 - **Icon:** Settings from Lucide
 - **Size:** 24px
 - **Color:** Sky-400 (`#38bdf8`)
@@ -133,6 +182,7 @@ const position = {
 - **Animation:** Rotates 360° every 1 second (stops when paused or at last item)
 
 ### Item Text
+
 - **Font size:** 13px
 - **Font weight:** 500 (medium)
 - **Color:** Sky-700 (`#0369a1`)
@@ -140,15 +190,27 @@ const position = {
 - **Alignment:** Centered within container
 
 ### Progress Dots
+
 - **Count:** 4 dots (one per step)
 - **Size:** 4px diameter (r=2)
 - **Active color:** Sky-400 (`#38bdf8`)
 - **Inactive color:** Sky-200 (`#bae6fd`)
 - **Position:** Bottom center of container
 
+### InfoPopup Styling
+
+- **Width:** 256px (w-64)
+- **Background:** White (`#ffffff`)
+- **Border:** 1px solid slate-200
+- **Border radius:** 8px
+- **Shadow:** shadow-lg
+- **Header:** Slate-50 background with slate-200 border
+- **Animation:** 0.15s fade with scale effect
+
 ## Animation Specifications
 
 ### CSS Keyframes (Reuse Existing from globals.css)
+
 ```css
 /* Layer fade in - reuse existing */
 .exec-steps-layer-fade-in {
@@ -162,6 +224,7 @@ const position = {
 ```
 
 ### SVG animateTransform for Gear (Same as Existing)
+
 ```xml
 <animateTransform
   attributeName="transform"
@@ -174,6 +237,7 @@ const position = {
 ```
 
 ### Animation Timing Constants (Reuse Existing from FlowchartContext.tsx)
+
 ```typescript
 // Reuse existing constants
 ANIMATION_DURATIONS.EXEC_STEPS_LAYER_FADE: 300
@@ -184,6 +248,7 @@ ANIMATION_DURATIONS.EXEC_STEPS_ITEM_TRANSITION: 300
 ## Click Handler Integration
 
 ### Modified startAnimation in FlowchartContext.tsx
+
 ```typescript
 const startAnimation = useCallback((nodeId: NodeId) => {
   // ... existing logic
@@ -200,7 +265,24 @@ const startAnimation = useCallback((nodeId: NodeId) => {
 }, []);
 ```
 
+### handleNodeClick in Flowchart.tsx
+
+```typescript
+const handleNodeClick = (nodeId: string) => {
+  // Special case: Production node is active and clicked again
+  if (nodeId === 'production' && activeNode === 'production') {
+    addToCompletedNodes('production');
+    setActiveNode(null);
+    return;
+  }
+
+  // Handle execution steps layers...
+  // Start animation...
+};
+```
+
 ### Layer Click Handler in DifyExecStepsLayer.tsx
+
 ```typescript
 const handleClick = () => {
   if (isAtLastItem) {
@@ -214,6 +296,20 @@ const handleClick = () => {
 };
 ```
 
+### InfoPopup Click Handler
+
+```typescript
+<button
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  }}
+>
+  <Info size={14} className={isOpen ? 'text-blue-500' : 'text-slate-400'} />
+</button>
+```
+
 ## Visibility State Logic
 
 | Action | difyExecStepsVisible | isPaused | currentIndex |
@@ -223,11 +319,13 @@ const handleClick = () => {
 | Click predecessor node | false | - | 0 (reset) |
 | Click successor node | unchanged | unchanged | unchanged |
 | Click layer (scrolling) | unchanged | toggled | unchanged |
-| Click layer (at last item) | unchanged | false | 0 (restart) |
+| Click layer (at last item) | unchanged | false | 0 (Restart) |
+| Click Production (when active) | - | - | - (resets activeNode to null) |
 
 ## Accessibility
 
 The DifyExecStepsLayer will include:
+
 - `role="button"` on the container (clickable element)
 - `aria-label` with current state: `AI Workflow Deployment Steps: {currentItem}{Paused?}`
 - `aria-live="polite"` for item changes
@@ -239,6 +337,7 @@ The DifyExecStepsLayer will include:
 ## Error Handling
 
 ### Error Scenarios
+
 1. **Scenario:** Node positions undefined or edge missing
    - **Handling:** Return null from component (no render)
    - **User Impact:** Layer simply doesn't appear, flowchart remains functional
@@ -254,20 +353,26 @@ The DifyExecStepsLayer will include:
 ## Testing Strategy
 
 ### Unit Testing
+
 - Test DifyExecStepsLayer renders when `difyExecStepsVisible` is true
 - Test that layer is hidden when `difyExecStepsVisible` is false
 - Test auto-scroll timer advances `difyExecStepsCurrentIndex` correctly
 - Test that timer stops at last item (index 3)
 - Test `resetDifyExecStepsAnimation` resets to index 0
 - Test pause/resume functionality on click
+- Test InfoPopup toggles on click
+- Test default state icon triggers workflow start
 
 ### Integration Testing
+
 - Test that clicking `jenkins-for-dify` node sets `difyExecStepsVisible` to true
 - Test that re-clicking `jenkins-for-dify` resets animation to index 0
 - Test that clicking predecessor nodes hides the layer
 - Test that clicking successor nodes keeps the layer visible
 - Test fade animations apply correct CSS classes
 - Test gear spinning stops when paused or at last item
+- Test clicking active Production node marks it completed and resets to default
 
 ### End-to-End Testing
-- Test complete user flow: load flowchart → click Jenkins-for-Dify node → watch scroll animation → pause → resume → verify last item stays visible → click to restart
+
+- Test complete user flow: load flowchart → click default Play icon → watch workflow progress → interact with InfoPopup → complete workflow at Production

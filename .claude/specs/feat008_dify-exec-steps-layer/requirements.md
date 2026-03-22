@@ -4,6 +4,11 @@
 
 Add an interactive execution steps layer above the `e-aliyun-jenkins-dify` edge in the flowchart. This layer displays AI workflow deployment steps (Pull DSL, Login Dify, Deploy Workflow, Verify) with icons. The layer behavior and visual styling will be consistent with the existing `ExecutionStepsLayer` component for the `e-aliyun-jenkins-svc` edge, featuring a spinning gear icon, auto-scroll animation, and click-to-pause/resume functionality. Initially hidden, it is revealed when the user clicks the `jenkins-for-dify` action node.
 
+Additionally, enhance the StepDescription component with:
+- Complete descriptions for all 11 steps in the workflow
+- InfoPopup component for showing detailed information on hover/click
+- Clickable icon on default state to start the workflow
+
 ## Alignment with Product Vision
 
 This feature extends the flowchart's interactivity by providing users with a clear visualization of the Jenkins-to-Dify AI workflow deployment pipeline. It demonstrates the technical capabilities of the enterprise portal for both service deployment and AI workflow deployment scenarios, maintaining consistency with the existing ice-blue visual theme.
@@ -100,11 +105,53 @@ This feature extends the flowchart's interactivity by providing users with a cle
 1. WHEN the execution steps layer becomes visible THEN it SHALL fade in with a smooth transition effect
 2. WHEN items transition during auto-scroll THEN the incoming item SHALL fade in
 
+### Requirement 9: StepDescription Complete Content
+
+**User Story:** As a user, I want to see detailed descriptions for all workflow steps, so that I understand each stage of the DevOps process.
+
+#### Acceptance Criteria
+
+1. WHEN any of the 11 nodes is active THEN the StepDescription SHALL display relevant title and description
+2. WHEN the description contains step details THEN it SHALL use inline Lucide icons to represent each step
+3. WHEN the description references external tools (Jenkins, Dify, GitLab, Aliyun) THEN it SHALL display their logos inline
+
+### Requirement 10: InfoPopup Component
+
+**User Story:** As a user, I want to see additional details about specific steps in a floating popup, so that I can learn more without cluttering the main view.
+
+#### Acceptance Criteria
+
+1. WHEN an Info icon is clicked THEN a floating info box SHALL appear with additional details
+2. WHEN the info box is open AND the Info icon is clicked again THEN the box SHALL close
+3. WHEN the info box is open AND the X button is clicked THEN the box SHALL close
+4. WHEN the info box appears/disappears THEN it SHALL have a smooth fade animation (0.15s duration)
+
+### Requirement 11: Default State Clickable Icon
+
+**User Story:** As a user, I want to start the workflow by clicking the icon on the default StepDescription, so that I can easily begin the interactive walkthrough.
+
+#### Acceptance Criteria
+
+1. WHEN the default StepDescription is displayed THEN the Play icon SHALL be clickable
+2. WHEN the Play icon is clicked THEN the workflow SHALL start by triggering the Developer node click
+3. WHEN hovering over the clickable icon THEN it SHALL show a scale-up effect
+
+### Requirement 12: Production Node Completion
+
+**User Story:** As a user, I want to complete the workflow by clicking the active Production node, so that I can return to the default state after finishing.
+
+#### Acceptance Criteria
+
+1. WHEN the Production node is active AND is clicked THEN it SHALL be marked as completed
+2. WHEN the Production node is completed THEN the StepDescription SHALL return to default state
+3. WHEN the Production node is completed THEN `activeNode` SHALL be set to null
+
 ## Non-Functional Requirements
 
 ### Performance
 - The layer fade-in animation SHALL complete within 300ms
 - The auto-scroll timer SHALL be precise with no perceptible drift
+- The InfoPopup animation SHALL complete within 150ms
 
 ### Security
 - No sensitive data is processed by this feature

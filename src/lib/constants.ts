@@ -30,6 +30,12 @@ export const NAVIGATION_ITEMS = [
     href: '/',
     icon: 'Home',
   },
+  {
+    id: 'cicd-workflow',
+    label: 'DevOps Platform',
+    href: '/cicd-workflow',
+    icon: 'GitBranch',
+  },
 ] as const;
 
 // Types

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-64px)] p-8">
+    <div className="flex items-center justify-center min-h-[calc(100vh-64px)] p-0">
       <Image
         src="/coach.png"
         alt="Coach Image"

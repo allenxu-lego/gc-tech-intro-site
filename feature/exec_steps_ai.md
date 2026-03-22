@@ -1,0 +1,6 @@
+- 在Edge `e-aliyun-jenkins-dify` label 的显示区域添加和`.claude/feat007_exec-steps-layer/`所创建的`ExecutionStepsLayer` 浮层，浮层的行为逻辑保持一致。
+- 浮层内的Item为,Item项显示的方式是{Icon} {Item_Name}，{Icon}先从网上搜索合适的图标，后续再手动调整。
+  - Pull DSL
+  - Login Dify
+  - Deploy Workflow
+  - Verify

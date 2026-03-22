@@ -1,0 +1,12 @@
+- 在Edge `e-aliyun-jenkins-svc` label 的显示区域之上添加一个图层。
+- 图层中包含下列Item, Item项显示的方式是{Icon} {Item_Name}，{Icon}先从网上搜索合适的图标，后续再手动调整。
+  - Pull Code
+  - Unit Test
+  - Scan
+  - Build Image
+  - Push Image
+  - Deploy
+- 图层高度足够显示下一个Item，无需显示所有Item。
+- 图层初始时隐藏，当action node `jenkins-for-svc` 点击时显示，显示后不再隐藏。
+- 图层显示时，Item展现方式如下拉列表自动滚动，从第一个Item每个500毫秒自动滚动到下一个Item，显示最后一个Item停止滚动直到下一次点击action node `jenkins-for-svc` 时再次触发滚动。
+- 图层的显示和隐藏，以及Item滚动时的换入换出需有淡入淡出的效果

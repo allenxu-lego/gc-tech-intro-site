@@ -22,7 +22,7 @@ This is the **streamlined bug fix workflow** - a lighter alternative to the full
 You are helping create a new bug fix workflow. This is designed for smaller fixes that don't need the full spec workflow overhead.
 
 1. **Create Directory Structure**
-   - Create `.claude/bugs/{bug-name}/` directory
+   - Create `.claude/bugs/{bug-name}/` directory. {bug-name}` naming pattern is `bug[3-digit auto increase seq number]` followed by bug name.
    - Initialize report.md, analysis.md, and verification.md files
 
 2. **Load ALL Context Once (Hierarchical Context Loading)**

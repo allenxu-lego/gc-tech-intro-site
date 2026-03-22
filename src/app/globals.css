@@ -26,3 +26,139 @@ html, body {
   margin: 0;
   padding: 0;
 }
+
+/* Flowchart node entrance animation - opacity only for SVG compatibility */
+@keyframes flowchart-node-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Flowchart node pulse animation for active state - using filter only for SVG compatibility */
+@keyframes flowchart-node-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 0 rgba(234, 179, 8, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.4));
+  }
+}
+
+/* Apply entrance animation to flowchart nodes - removed opacity:0 for SVG compatibility */
+.flowchart-node-enter {
+  /* Animation removed for SVG <g> element compatibility */
+}
+
+/* Apply pulse animation to active flowchart nodes */
+.flowchart-node-active {
+  animation: flowchart-node-pulse 0.6s ease-in-out infinite;
+}
+
+/* Flowchart edge draw animation */
+@keyframes flowchart-edge-draw {
+  from {
+    stroke-dashoffset: var(--path-length);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Flowchart edge flow animation for completed edges */
+@keyframes flowchart-edge-flow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+/* Edge draw animation class */
+.flowchart-edge-draw {
+  animation: flowchart-edge-draw 0.8s ease-out forwards;
+}
+
+/* Edge flowing dash animation class */
+.flowchart-edge-flowing {
+  stroke-dasharray: 6 14;
+  animation: flowchart-edge-flow 0.8s linear infinite;
+}
+
+/* Execution steps layer fade-in animation */
+@keyframes exec-steps-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Execution steps item fade-in animation */
+@keyframes exec-steps-item-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Execution steps item fade-out animation */
+@keyframes exec-steps-item-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* Execution steps layer fade-in class */
+.exec-steps-layer-fade-in {
+  animation: exec-steps-fade-in 300ms ease-out forwards;
+}
+
+/* Execution steps item fade-in class */
+.exec-steps-item-fade-in {
+  animation: exec-steps-item-fade-in 200ms ease-out forwards;
+}
+
+/* Execution steps item fade-out class */
+.exec-steps-item-fade-out {
+  animation: exec-steps-item-fade-out 200ms ease-in forwards;
+}
+
+/* Execution steps gear spin animation */
+@keyframes exec-steps-gear-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Flowchart canvas background */
+.flowchart-canvas {
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+/* Accessibility: Respect user's reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

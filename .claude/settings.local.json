@@ -2,7 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(mv \"../_temp_assets/coach.png\" \"c:\\\\Users\\\\axu01\\\\Works\\\\gc-tech-intro-site\\\\public\\\\coach.png\")",
-      "Bash(rmdir \"../_temp_assets\")"
+      "Bash(rmdir \"../_temp_assets\")",
+      "Bash(claude-code-spec-workflow get-template-context:*)",
+      "Bash(claude-code-spec-workflow get-spec-context:*)",
+      "Bash(npx claude-code-spec-workflow:*)",
+      "WebFetch(domain:localhost)",
+      "Read(//c/Users/axu01/Works/qoder-app1/src/**)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/cicd-workflow)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001/cicd-workflow)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\axu01\\Works\\gc-tech-intro-site\\.claude\\specs",
+      "c:\\Users\\axu01\\Works\\gc-tech-intro-site\\.claude\\bugs"
     ]
   }
 }

@@ -51,7 +51,7 @@ You are helping create a new feature specification through the complete workflow
 ### Initial Setup
 
 1. **Create Directory Structure**
-   - Create `.claude/specs/{feature-name}/` directory
+   - Create `.claude/specs/{feature-name}/` directory. `{feature-name}` naming pattern is `feat[3-digit auto increase seq number]` followed by feature name. 
    - Initialize empty requirements.md, design.md, and tasks.md files
 
 2. **Load ALL Context Once (Hierarchical Context Loading)**

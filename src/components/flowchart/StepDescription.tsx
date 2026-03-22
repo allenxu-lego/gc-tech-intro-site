@@ -234,7 +234,7 @@ const steps: Record<string, StepInfo> = {
         <br/><strong>Steps:</strong><br/>
         1)<Download size={16} className="inline-block mx-1 align-middle text-blue-500" />Pull DSL from <img src="/gitlab.png" alt="GitLab" className="inline-block w-5 h-5 mx-1 align-middle" /> <ArrowRight size={16} className="inline-block mx-1 align-middle text-blue-500" />
         2)<LogIn size={16} className="inline-block mx-1 align-middle text-blue-500" />Log in<img src="/dify.svg" alt="Dify" className="inline-block w-5 h-5 mx-1 align-middle" /><ArrowRight size={16} className="inline-block mx-1 align-middle text-blue-500" /><br/>
-        3)<Rocket size={16} className="inline-block mx-1 align-middle text-blue-500" />Deploy DSL<ArrowRight size={16} className="inline-block mx-1 align-middle text-blue-500" />
+        3)<Rocket size={16} className="inline-block mx-1 align-middle text-blue-500" />Deploy DSL to <img src="/dify.svg" alt="Dify" className="inline-block w-5 h-5 mx-1 align-middle" /><ArrowRight size={16} className="inline-block mx-1 align-middle text-blue-500" />
         4)<CheckCircle size={16} className="inline-block mx-1 align-middle text-blue-500" />Verify Deployment
       </>
     ),
@@ -245,7 +245,7 @@ const steps: Record<string, StepInfo> = {
     title: 'AI Platform',
     description: (
       <>
-        Tapestry managed<img src="/dify-bw.svg" alt="Dify" className="inline-block w-5 h-5 mx-1 align-middle" />
+        Tapestry managed<img src="/dify.svg" alt="Dify" className="inline-block w-5 h-5 mx-1 align-middle" />
         system serves as the central AI orchestration platform.
       </>
     ),

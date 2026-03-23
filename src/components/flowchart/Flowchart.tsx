@@ -59,6 +59,8 @@ function FlowchartContent({ className }: FlowchartProps) {
     resetDifyExecStepsAnimation,
     setActiveNode,
     addToCompletedNodes,
+    triggerNextStep,
+    getNextNode,
   } = useFlowchart();
 
   // Get the next node IDs (targets of edges from active node)
@@ -245,6 +247,15 @@ function FlowchartContent({ className }: FlowchartProps) {
         <StepDescription
           activeNode={activeNode}
           onStartWorkflow={() => handleNodeClick('developer')}
+          onContinue={() => {
+            if (activeNode === 'production') {
+              addToCompletedNodes('production');
+              setActiveNode(null);
+            } else {
+              triggerNextStep();
+            }
+          }}
+          hasNextStep={activeNode ? getNextNode(activeNode) !== null : false}
         />
       </div>
       {/* Flowchart Container */}

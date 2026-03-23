@@ -23,12 +23,15 @@ import {
   X,
   Package,
   Upload,
+  ArrowRightCircleIcon,
 } from 'lucide-react';
 import type { NodeId } from './FlowchartContext';
 
 interface StepDescriptionProps {
   activeNode: NodeId | null;
   onStartWorkflow?: () => void;
+  onContinue?: () => void;
+  hasNextStep?: boolean;
 }
 
 interface StepInfo {
@@ -278,7 +281,7 @@ const nodeSequence: NodeId[] = [
   'production',
 ];
 
-export default function StepDescription({ activeNode, onStartWorkflow }: StepDescriptionProps) {
+export default function StepDescription({ activeNode, onStartWorkflow, onContinue, hasNextStep }: StepDescriptionProps) {
   const stepKey = activeNode || 'default';
   const step = steps[stepKey] || steps.default;
   const stepNumber = activeNode ? nodeSequence.indexOf(activeNode) + 1 : 0;
@@ -323,6 +326,20 @@ export default function StepDescription({ activeNode, onStartWorkflow }: StepDes
               >
                 {step.title}
               </h2>
+              {!isDefault && (
+                <button
+                  type="button"
+                  onClick={onContinue}
+                  className="flex items-center justify-center cursor-pointer hover:scale-110 transition-transform ml-1"
+                  title={hasNextStep ? "Continue to next step" : "Return to start"}
+                >
+                  <ArrowRightCircleIcon
+                    size={18}
+                    style={{ color: step.accent }}
+                    strokeWidth={2}
+                  />
+                </button>
+              )}
             </div>
           </div>
           <div className="text-sm text-slate-500 max-w-[600px]">{step.description}</div>

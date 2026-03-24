@@ -151,6 +151,16 @@ html, body {
   border: 1px solid #e2e8f0;
 }
 
+/* Hide scrollbar for tab navigation on mobile */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Accessibility: Respect user's reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,

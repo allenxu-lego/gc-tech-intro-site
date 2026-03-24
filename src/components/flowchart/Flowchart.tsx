@@ -241,9 +241,9 @@ function FlowchartContent({ className }: FlowchartProps) {
       >
         Git Flow & CI/CD Automation
       </motion.h1>
-      
+
       {/* Step Description */}
-      <div className="mt-2 w-full max-w-4xl mb-8">
+      <div className="mt-2 w-full mb-8">
         <StepDescription
           activeNode={activeNode}
           onStartWorkflow={() => handleNodeClick('developer')}
@@ -260,7 +260,7 @@ function FlowchartContent({ className }: FlowchartProps) {
       </div>
       {/* Flowchart Container */}
       <div
-        className={`flowchart-canvas relative p-0 transition-all duration-200 ${
+        className={`flowchart-canvas relative p-0 ${
           className || ''
         }`}
       >
@@ -272,7 +272,7 @@ function FlowchartContent({ className }: FlowchartProps) {
         {/* Main SVG container */}
         <svg
           viewBox="0 0 1000 400"
-          className="w-full max-w-4xl h-[350px] mx-auto"
+          className="w-full h-[350px]"
           role="img"
           aria-label="CI/CD Pipeline Flowchart showing the workflow from Developer code submission through GitLab merge request and code review"
         >

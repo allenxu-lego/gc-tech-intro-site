@@ -147,14 +147,16 @@ function generatePartialPath(
 export function Timeline() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [focusedIndex, setFocusedIndex] = useState(0);
-  const [viewportWidth, setViewportWidth] = useState(
-    typeof window !== 'undefined' ? window.innerWidth : 1024
-  );
+  const [viewportWidth, setViewportWidth] = useState(1024);
+  const [isMounted, setIsMounted] = useState(false);
   const progressPathRef = useRef<SVGPathElement>(null);
   const [pathLength, setPathLength] = useState(0);
 
-  // Responsive viewport detection
+  // Responsive viewport detection - only run on client
   useEffect(() => {
+    setIsMounted(true);
+    setViewportWidth(window.innerWidth);
+
     const handleResize = () => setViewportWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -229,11 +231,14 @@ export function Timeline() {
 
   return (
     <div className="w-full py-8">
-      <svg
-        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-        className="w-full h-auto max-w-4xl mx-auto"
-        style={{ minHeight: isSnakeLayout ? '240px' : '160px' }}
-      >
+      {!isMounted ? (
+        <div className="w-full h-[160px]" />
+      ) : (
+        <svg
+          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+          className="w-full h-auto max-w-4xl mx-auto"
+          style={{ minHeight: isSnakeLayout ? '240px' : '160px' }}
+        >
         {/* Connection lines (base layer) */}
         <path
           d={connectionPath}
@@ -345,6 +350,7 @@ export function Timeline() {
           );
         })}
       </svg>
+      )}
 
       {/* Instructions */}
       <p className="text-center text-slate-400 text-sm mt-4">

@@ -25,7 +25,7 @@ const items = [
 
 export function WhyWhatContent() {
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
-  const [isDiagramExpanded, setIsDiagramExpanded] = useState(true);
+  const [isDiagramExpanded, setIsDiagramExpanded] = useState(false);
 
   const toggleItem = (index: number) => {
     setExpandedItems((prev) => {

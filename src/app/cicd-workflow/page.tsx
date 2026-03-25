@@ -13,7 +13,7 @@ const TABS: TabItem[] = [
 ];
 
 export default function CICDWorkflowPage() {
-  const [activeTab, setActiveTab] = useState('how');
+  const [activeTab, setActiveTab] = useState('why-what');
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
 

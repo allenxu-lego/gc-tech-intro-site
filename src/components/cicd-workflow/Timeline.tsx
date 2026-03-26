@@ -1,8 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flag, Rocket, LucideIcon, SendHorizonal, Pickaxe, Milestone } from 'lucide-react';
+import { Flag, Rocket, LucideIcon, SendHorizonal, Pickaxe, Milestone, JoystickIcon, Handshake, HandFist, HandGrab, Cog, SendHorizontal, SendIcon, SendToBack, SendToBackIcon, CircleArrowLeft } from 'lucide-react';
 
 // Types
 interface TimelineNodeData {
@@ -10,6 +11,7 @@ interface TimelineNodeData {
   title: string;
   date: string;
   icon: LucideIcon;
+  title_icon?: string;
 }
 
 interface NodePosition {
@@ -22,10 +24,11 @@ interface NodePosition {
 // Data
 const TIMELINE_NODES: TimelineNodeData[] = [
   { id: 'start', title: 'Start', date: 'Feb 2026', icon: Flag },
-  { id: 'tech-decision', title: 'Tech Decision', date: 'Mar 2026', icon: Milestone },
+  { id: 'tech-decision', title: 'Tech Decision', date: 'Mar 2026', icon: Milestone, title_icon: '/codeup.png' },
   { id: 'implementation', title: 'Implementation', date: 'Apr 2026', icon: Pickaxe },
   { id: 'enable-coach', title: 'Enable One Coach', date: 'Jun 2026', icon: Rocket },
-  { id: 'future', title: 'More products', date: 'Future', icon: SendHorizonal },
+  { id: 'adopt-jenkins', title: 'Adopt Jenkins', date: 'FY27', icon: Cog, title_icon: '/jenkins-color.png' },
+  { id: 'optimization', title: 'Continuous Optimization', date: 'Future', icon: CircleArrowLeft },
 ];
 
 // Animation constants
@@ -51,21 +54,17 @@ const COLORS = {
 
 // Node sizing
 const NODE_SIZE = {
-  diameter: 48,
+  diameter: 40,
   iconSize: 20,
   horizontalSpacing: 120,
   verticalSpacing: 100,
   paddingX: 60,
-  paddingY: 60,
+  paddingY: 40,
 } as const;
 
-// Calculate node positions based on viewport width
-function calculatePositions(
-  nodeCount: number,
-  viewportWidth: number
-): NodePosition[] {
-  const isMobile = viewportWidth < 640;
-  const nodesPerRow = isMobile ? 3 : nodeCount;
+// Calculate node positions for snake layout (3 nodes per row)
+function calculatePositions(nodeCount: number): NodePosition[] {
+  const nodesPerRow = 3;
 
   const positions: NodePosition[] = [];
 
@@ -73,8 +72,8 @@ function calculatePositions(
     const row = Math.floor(i / nodesPerRow);
     const col = i % nodesPerRow;
 
-    // In snake layout, reverse odd rows
-    const isReversedRow = isMobile && row % 2 === 1;
+    // Snake layout: reverse odd rows
+    const isReversedRow = row % 2 === 1;
     const actualCol = isReversedRow ? nodesPerRow - 1 - col : col;
 
     const x = NODE_SIZE.paddingX + actualCol * NODE_SIZE.horizontalSpacing;
@@ -86,11 +85,8 @@ function calculatePositions(
   return positions;
 }
 
-// Generate path for connection lines
-function generateConnectionPath(
-  positions: NodePosition[],
-  isSnakeLayout: boolean
-): string {
+// Generate path for connection lines with semicircular turns
+function generateConnectionPath(positions: NodePosition[]): string {
   if (positions.length < 2) return '';
 
   const parts: string[] = [];
@@ -99,16 +95,13 @@ function generateConnectionPath(
     const current = positions[i];
     const next = positions[i + 1];
 
-    // In snake layout, add vertical connector between rows
-    if (isSnakeLayout && current.row !== next.row) {
-      // Draw L-shaped path for row transition
-      const midY = current.y + NODE_SIZE.verticalSpacing / 2;
-      parts.push(`M ${current.x} ${current.y}`);
-      parts.push(`L ${current.x} ${midY}`);
-      parts.push(`L ${next.x} ${midY}`);
-      parts.push(`L ${next.x} ${next.y}`);
+    if (current.row !== next.row) {
+      // Draw semicircular arc for row transition (curves outward)
+      const radius = NODE_SIZE.verticalSpacing / 2;
+      // Arc curves outward to the right (sweep=1 for clockwise)
+      parts.push(`M ${current.x} ${current.y} A ${radius} ${radius} 0 0 1 ${next.x} ${next.y}`);
     } else {
-      // Straight horizontal or diagonal line
+      // Straight horizontal line
       parts.push(`M ${current.x} ${current.y} L ${next.x} ${next.y}`);
     }
   }
@@ -117,11 +110,7 @@ function generateConnectionPath(
 }
 
 // Generate partial path for progress animation
-function generatePartialPath(
-  positions: NodePosition[],
-  targetIndex: number,
-  isSnakeLayout: boolean
-): string {
+function generatePartialPath(positions: NodePosition[], targetIndex: number): string {
   if (targetIndex < 1 || positions.length < 2) return '';
 
   const parts: string[] = [];
@@ -130,12 +119,9 @@ function generatePartialPath(
     const current = positions[i];
     const next = positions[i + 1];
 
-    if (isSnakeLayout && current.row !== next.row) {
-      const midY = current.y + NODE_SIZE.verticalSpacing / 2;
-      parts.push(`M ${current.x} ${current.y}`);
-      parts.push(`L ${current.x} ${midY}`);
-      parts.push(`L ${next.x} ${midY}`);
-      parts.push(`L ${next.x} ${next.y}`);
+    if (current.row !== next.row) {
+      const radius = NODE_SIZE.verticalSpacing / 2;
+      parts.push(`M ${current.x} ${current.y} A ${radius} ${radius} 0 0 1 ${next.x} ${next.y}`);
     } else {
       parts.push(`M ${current.x} ${current.y} L ${next.x} ${next.y}`);
     }
@@ -147,31 +133,23 @@ function generatePartialPath(
 export function Timeline() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [focusedIndex, setFocusedIndex] = useState(0);
-  const [viewportWidth, setViewportWidth] = useState(1024);
   const [isMounted, setIsMounted] = useState(false);
   const progressPathRef = useRef<SVGPathElement>(null);
   const [pathLength, setPathLength] = useState(0);
 
-  // Responsive viewport detection - only run on client
+  // Mount detection for SSR
   useEffect(() => {
     setIsMounted(true);
-    setViewportWidth(window.innerWidth);
-
-    const handleResize = () => setViewportWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const isSnakeLayout = viewportWidth < 640;
-  const positions = calculatePositions(TIMELINE_NODES.length, viewportWidth);
+  const positions = calculatePositions(TIMELINE_NODES.length);
 
-  // Calculate SVG viewBox dimensions
-  const svgWidth = isSnakeLayout
-    ? NODE_SIZE.paddingX * 2 + 2 * NODE_SIZE.horizontalSpacing
-    : NODE_SIZE.paddingX * 2 + 4 * NODE_SIZE.horizontalSpacing;
-  const svgHeight = isSnakeLayout
-    ? NODE_SIZE.paddingY * 2 + NODE_SIZE.verticalSpacing
-    : NODE_SIZE.paddingY * 2;
+  // Calculate SVG viewBox dimensions dynamically (always snake layout, 3 nodes per row)
+  const nodeCount = TIMELINE_NODES.length;
+  const rowCount = Math.ceil(nodeCount / 3);
+
+  const svgWidth = NODE_SIZE.paddingX * 2 + 2 * NODE_SIZE.horizontalSpacing;
+  const svgHeight = NODE_SIZE.paddingY * 2 + (rowCount - 1) * NODE_SIZE.verticalSpacing + 30;
 
   // Update path length when selection changes
   useEffect(() => {
@@ -197,21 +175,17 @@ export function Timeline() {
           setFocusedIndex((index - 1 + TIMELINE_NODES.length) % TIMELINE_NODES.length);
           break;
         case 'ArrowDown':
-          if (isSnakeLayout) {
-            e.preventDefault();
-            const nextRow = index + 3;
-            if (nextRow < TIMELINE_NODES.length) {
-              setFocusedIndex(nextRow);
-            }
+          e.preventDefault();
+          const nextRow = index + 3;
+          if (nextRow < TIMELINE_NODES.length) {
+            setFocusedIndex(nextRow);
           }
           break;
         case 'ArrowUp':
-          if (isSnakeLayout) {
-            e.preventDefault();
-            const prevRow = index - 3;
-            if (prevRow >= 0) {
-              setFocusedIndex(prevRow);
-            }
+          e.preventDefault();
+          const prevRow = index - 3;
+          if (prevRow >= 0) {
+            setFocusedIndex(prevRow);
           }
           break;
         case 'Enter':
@@ -221,23 +195,23 @@ export function Timeline() {
           break;
       }
     },
-    [isSnakeLayout]
+    []
   );
 
-  const connectionPath = generateConnectionPath(positions, isSnakeLayout);
+  const connectionPath = generateConnectionPath(positions);
   const partialPath = selectedIndex !== null && selectedIndex > 0
-    ? generatePartialPath(positions, selectedIndex, isSnakeLayout)
+    ? generatePartialPath(positions, selectedIndex)
     : '';
 
   return (
-    <div className="w-full py-8">
+    <div className="w-full pb-8">
       {!isMounted ? (
         <div className="w-full h-[160px]" />
       ) : (
         <svg
           viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-          className="w-full h-auto max-w-4xl mx-auto"
-          style={{ minHeight: isSnakeLayout ? '240px' : '160px' }}
+          className="w-full h-auto max-w-2xl mx-auto"
+          style={{ minHeight: '240px' }}
         >
         {/* Connection lines (base layer) */}
         <path
@@ -326,22 +300,43 @@ export function Timeline() {
 
               {/* Title label */}
               <text
-                y={NODE_SIZE.diameter / 2 + 20}
+                y={NODE_SIZE.diameter / 2 + 15}
                 textAnchor="middle"
                 fill={COLORS.titleText}
-                fontSize="12"
+                fontSize="8"
                 fontWeight="600"
                 className="select-none pointer-events-none"
               >
                 {node.title}
               </text>
 
+              {/* Title Icon - brand icon positioned at top-right of title */}
+              {node.title_icon && (
+                <foreignObject
+                  x={28}
+                  y={NODE_SIZE.diameter / 2 - 5}
+                  width={20}
+                  height={20}
+                >
+                  <Image
+                    src={node.title_icon}
+                    alt={`${node.title} brand icon`}
+                    width={16}
+                    height={16}
+                    className="object-contain"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </foreignObject>
+              )}
+
               {/* Date label */}
               <text
-                y={NODE_SIZE.diameter / 2 + 36}
+                y={NODE_SIZE.diameter / 2 + 25}
                 textAnchor="middle"
                 fill={COLORS.dateText}
-                fontSize="10"
+                fontSize="6"
                 className="select-none pointer-events-none"
               >
                 {node.date}
@@ -351,11 +346,6 @@ export function Timeline() {
         })}
       </svg>
       )}
-
-      {/* Instructions */}
-      <p className="text-center text-slate-400 text-sm mt-4">
-        Click a milestone to see progress from start
-      </p>
     </div>
   );
 }

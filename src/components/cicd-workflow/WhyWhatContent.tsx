@@ -2,24 +2,24 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, User } from 'lucide-react';
+import { Plus, Minus, User, Code2, Gitlab, Hammer, HandMetal } from 'lucide-react';
 import Image from 'next/image';
 
 const items = [
   {
     number: 1,
-    title: 'Faster Time-to-Market',
-    content: 'Automate testing and deployment to launch features, fixes, and promotions quickly especially critical during peak retail seasons.',
+    title: 'Enhanced Control and Flexibility',
+    content: 'Full ownership over the codebase and CI/CD pipeline allows for complete customization of development workflows, tools, and security policies to match internal needs and pace.',
   },
   {
     number: 2,
-    title: 'Higher Reliability & Security',
-    content: 'Ensure consistent environments, reduce production errors, and enforce security compliance controls across the pipeline.',
+    title: 'Improved Security and Compliance',
+    content: 'Direct management of the repository and infrastructure enables stricter access controls, better audit trails, and easier adherence to specific industry or regional data security regulations.',
   },
   {
     number: 3,
-    title: 'Greater Team Autonomy & Agility',
-    content: 'Empower developers with self-service workflows, faster feedback loops, and ownership from code to customer experience.',
+    title: 'Long-term Cost Efficiency and Vendor Independence',
+    content: 'Reduces ongoing reliance on external vendors and lock-in risks, and allows for optimized infrastructure spending over time.',
   },
 ];
 
@@ -40,7 +40,7 @@ export function WhyWhatContent() {
   };
 
   return (
-    <div className="py-12 w-full">
+    <div className="py-6 w-full">
       <div className="flex items-center justify-center gap-2 mb-4">
         <Image src="/badge.png" alt="Badge" width={32} height={32} />
         <h2 className="text-2xl font-semibold text-slate-800 text-center">
@@ -48,46 +48,8 @@ export function WhyWhatContent() {
         </h2>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 space-y-4">
-        {items.map((item, index) => (
-          <div key={item.number} className="flex gap-3">
-            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-white font-bold text-sm">
-              {item.number}
-            </div>
-            <div className="flex-1">
-              <button
-                onClick={() => toggleItem(index)}
-                className="inline-flex items-center gap-1 text-left group"
-              >
-                <h3 className="text-lg font-semibold text-slate-800">{item.title}</h3>
-                <div className="w-5 h-5 rounded bg-slate-100 flex items-center justify-center group-hover:bg-yellow-100 transition-colors">
-                  {expandedItems.has(index) ? (
-                    <Minus className="w-3 h-3 text-slate-500 group-hover:text-yellow-600" />
-                  ) : (
-                    <Plus className="w-3 h-3 text-slate-500 group-hover:text-yellow-600" />
-                  )}
-                </div>
-              </button>
-              <AnimatePresence initial={false}>
-                {expandedItems.has(index) && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    className="overflow-hidden"
-                  >
-                    <p className="text-sm text-slate-500 pt-2">{item.content}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        ))}
-      </div>
-
       {/* Architecture Diagram Section */}
-      <div className="max-w-2xl mx-auto px-4 mt-12">
+      <div className="max-w-2xl mx-auto px-4 mt-10 mb-4">
         <button
           onClick={() => setIsDiagramExpanded(!isDiagramExpanded)}
           className="inline-flex items-center gap-1 text-left group mb-4"
@@ -146,9 +108,9 @@ export function WhyWhatContent() {
 
           {/* Developer node (outside cloud) */}
           <g transform="translate(30, 40)">
-            <rect x="0" y="0" width="80" height="60" rx="8" fill="#f1f5f9" stroke="#e2e8f0" strokeWidth="1.5" />
+            <rect x="0" y="0" width="80" height="60" rx="8" fill="#e0f7fa" stroke="#06b6d4" strokeWidth="1.5" />
             <g transform="translate(28, 8)">
-              <User size={24} style={{ color: '#94a3b8' }} />
+              <User size={24} style={{ color: '#0891b2' }} />
             </g>
             <text x="40" y="52" textAnchor="middle" className="text-[10px] fill-slate-500 font-medium">
               Developer
@@ -157,36 +119,40 @@ export function WhyWhatContent() {
 
           {/* GitLab node */}
           <g transform="translate(160, 40)">
-            <rect x="0" y="0" width="60" height="60" rx="8" fill="#f1f5f9" stroke="#e2e8f0" strokeWidth="1.5" />
-            <image href="/gitlab.png" x="14" y="8" width="32" height="32" />
-            <text x="30" y="56" textAnchor="middle" className="text-[10px] fill-slate-500 font-medium">
-              GitLab
+            <rect x="0" y="0" width="60" height="60" rx="8" fill="#e0f7fa" stroke="#06b6d4" strokeWidth="1.5" />
+            <g transform="translate(18, 8)">
+              <Gitlab size={24} style={{ color: '#0891b2' }} />
+            </g>
+            <text x="30" y="50" textAnchor="middle" className="text-[10px] fill-slate-500 font-medium">
+              Git Repo
             </text>
           </g>
 
           {/* Jenkins node */}
           <g transform="translate(160, 160)">
-            <rect x="0" y="0" width="60" height="60" rx="8" fill="#f1f5f9" stroke="#e2e8f0" strokeWidth="1.5" />
-            <image href="/jenkins-color.png" x="14" y="8" width="32" height="32" />
-            <text x="30" y="56" textAnchor="middle" className="text-[10px] fill-slate-500 font-medium">
-              Jenkins
+            <rect x="0" y="0" width="60" height="60" rx="8" fill="#e0f7fa" stroke="#06b6d4" strokeWidth="1.5" />
+            <g transform="translate(18, 8)">
+              <Hammer size={24} style={{ color: '#0891b2' }} />
+            </g>
+            <text x="30" y="50" textAnchor="middle" className="text-[10px] fill-slate-500 font-medium">
+              CI/CD
             </text>
           </g>
 
           {/* Dify node */}
           <g transform="translate(300, 40)">
-            <rect x="0" y="0" width="60" height="60" rx="8" fill="#f1f5f9" stroke="#e2e8f0" strokeWidth="1.5" />
+            <rect x="0" y="0" width="60" height="60" rx="8" fill="#e0f7fa" stroke="#06b6d4" strokeWidth="1.5" />
             <image href="/dify.svg" x="14" y="8" width="32" height="32" />
-            <text x="30" y="56" textAnchor="middle" className="text-[10px] fill-slate-500 font-medium">
+            <text x="30" y="50" textAnchor="middle" className="text-[10px] fill-slate-500 font-medium">
               Dify
             </text>
           </g>
 
           {/* Kubernetes node */}
           <g transform="translate(300, 160)">
-            <rect x="0" y="0" width="60" height="60" rx="8" fill="#f1f5f9" stroke="#e2e8f0" strokeWidth="1.5" />
+            <rect x="0" y="0" width="60" height="60" rx="8" fill="#e0f7fa" stroke="#06b6d4" strokeWidth="1.5" />
             <image href="/kubernetes.png" x="14" y="8" width="32" height="32" />
-            <text x="30" y="56" textAnchor="middle" className="text-[10px] fill-slate-500 font-medium">
+            <text x="30" y="50" textAnchor="middle" className="text-[10px] fill-slate-500 font-medium">
               Kubernetes
             </text>
           </g>
@@ -272,6 +238,44 @@ export function WhyWhatContent() {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-4 space-y-4">
+        {items.map((item, index) => (
+          <div key={item.number} className="flex gap-3">
+            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-white font-bold text-sm">
+              {item.number}
+            </div>
+            <div className="flex-1">
+              <button
+                onClick={() => toggleItem(index)}
+                className="inline-flex items-center gap-1 text-left group"
+              >
+                <h3 className="text-lg font-semibold text-slate-800">{item.title}</h3>
+                <div className="w-5 h-5 rounded bg-slate-100 flex items-center justify-center group-hover:bg-yellow-100 transition-colors">
+                  {expandedItems.has(index) ? (
+                    <Minus className="w-3 h-3 text-slate-500 group-hover:text-yellow-600" />
+                  ) : (
+                    <Plus className="w-3 h-3 text-slate-500 group-hover:text-yellow-600" />
+                  )}
+                </div>
+              </button>
+              <AnimatePresence initial={false}>
+                {expandedItems.has(index) && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <p className="text-sm text-slate-500 pt-2">{item.content}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

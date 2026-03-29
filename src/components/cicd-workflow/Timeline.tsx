@@ -27,7 +27,7 @@ const TIMELINE_NODES: TimelineNodeData[] = [
   { id: 'tech-decision', title: 'Tech Decision', date: 'Mar 2026', icon: Milestone, title_icon: '/codeup.png' },
   { id: 'implementation', title: 'Implementation', date: 'Apr 2026', icon: Pickaxe },
   { id: 'enable-coach', title: 'Enable One Coach', date: 'Jun 2026', icon: Rocket },
-  { id: 'adopt-jenkins', title: 'Adopt Jenkins', date: 'FY27', icon: Cog, title_icon: '/jenkins-color.png' },
+  { id: 'adopt-jenkins', title: 'Upgrade CI/CD Capability', date: 'FY27', icon: Cog },
   { id: 'optimization', title: 'Continuous Optimization', date: 'Future', icon: CircleArrowLeft },
 ];
 
@@ -278,17 +278,15 @@ export function Timeline() {
                 }}
               />
 
-              {/* Focus ring */}
-              {isFocused && (
-                <circle
-                  r={NODE_SIZE.diameter / 2 + 4}
-                  fill="none"
-                  stroke={COLORS.nodeSelected}
-                  strokeWidth="2"
-                  strokeDasharray="4 2"
-                />
-              )}
-
+              {/* Yellow outer ring for all nodes */}
+              <circle
+                r={NODE_SIZE.diameter / 2 + 4}
+                fill="none"
+                stroke={COLORS.nodeSelected}
+                strokeWidth="2"
+                strokeDasharray="4 2"
+              />
+            
               {/* Icon */}
               <g transform={`translate(-${NODE_SIZE.iconSize / 2}, -${NODE_SIZE.iconSize / 2})`}>
                 <IconComponent

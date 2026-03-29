@@ -14,7 +14,7 @@ const items = [
   {
     number: 2,
     title: 'Improved Security and Compliance',
-    content: 'Direct management of the repository and infrastructure enables stricter access controls, better audit trails, and easier adherence to specific industry or regional data security regulations.',
+    content: 'Direct management of the repository and infrastructure enables stricter access controls, better audit trails, and easier adherence to company\'s InfoSec requirement.',
   },
   {
     number: 3,

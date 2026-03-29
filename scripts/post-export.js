@@ -14,10 +14,15 @@ function processFile(filePath) {
     modified = true;
   }
 
-  // Fix href links
+  // Fix href="/xxx" - handle different element types
   if (content.includes('href="/')) {
-    content = content.replace(/href="\/"/g, 'href="./"');
-    content = content.replace(/href="\/([^"]+)"/g, 'href="./$1"');
+    // For SVG/image elements: <image href="/xxx">, <use href="/xxx">
+    content = content.replace(/(<(?:image|use)[^>]*?)href="\/([^"]+)"/gi, '$1href="./$2"');
+    // For link elements (stylesheets, etc.): <link href="/xxx">
+    content = content.replace(/(<link[^>]*?)href="\/([^"]+)"/gi, '$1href="./$2"');
+    // For anchor elements: <a href="/xxx">
+    content = content.replace(/(<a[^>]*?)href="\/"/gi, '$1href="./index.html"');
+    content = content.replace(/(<a[^>]*?)href="\/([^"]+)"/gi, '$1href="./$2"');
     modified = true;
   }
 
